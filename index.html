@@ -253,7 +253,7 @@
   </div>
 
   <div class="footer">
-    <p>Built with ❤️ for traders by Ayush. <a href="#">Privacy Policy</a></p>
+    <p>Made with ❤ for Traders by Ayush</p>
   </div>
 
   <script>
@@ -279,45 +279,49 @@
       // Show spinner while processing
       document.getElementById('spinner').style.display = 'block';
 
-      // Simulate processing time
-      setTimeout(async () => {
-        try {
-          const response = await fetch('/process-csv', {
-            method: 'POST',
-            body: formData
-          });
+      try {
+        // Sending the file to the server
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData
+        });
 
-          if (response.ok) {
-            const data = await response.json();
-            const downloadUrl = data.downloadUrl;
-            showDownloadLink(downloadUrl);
-          } else {
-            alert("Failed to process the CSV file.");
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          alert("An error occurred while processing the file.");
-        } finally {
-          // Hide the spinner after processing
+        const result = await response.json();
+        if (response.ok) {
+          // Hide spinner
           document.getElementById('spinner').style.display = 'none';
+
+          // Show download link
+          const downloadLink = document.getElementById('downloadLink');
+          downloadLink.innerHTML = `File processed! <a href="${result.download_url}" target="_blank">Download here</a>`;
+          
+          // Enable the submit button after processing
+          submitButton.style.backgroundColor = '#333';
+          submitButton.disabled = false;
+          submitButton.style.cursor = 'pointer';
+        } else {
+          throw new Error('File processing failed.');
         }
-      }, 3000); // Simulate a 3-second wait for processing
+      } catch (error) {
+        // Hide spinner and show error message
+        document.getElementById('spinner').style.display = 'none';
+        alert(error.message);
+        
+        // Enable the submit button after error
+        submitButton.style.backgroundColor = '#333';
+        submitButton.disabled = false;
+        submitButton.style.cursor = 'pointer';
+      }
     }
 
-    // Function to display the download link
-    function showDownloadLink(url) {
-      const downloadLinkDiv = document.getElementById('downloadLink');
-      downloadLinkDiv.innerHTML = `File processed successfully! <a href="${url}" download>Download the processed CSV</a>`;
-    }
-
-    // Change input file button color when a file is selected
+    // Change input color when file is selected
     function changeInputColor() {
       const fileInput = document.getElementById('csvFile');
-      const fileUploadBtn = document.querySelector('.file-upload-btn');
+      const label = fileInput.previousElementSibling;
       if (fileInput.files.length > 0) {
-        fileUploadBtn.style.backgroundColor = '#e74c3c';
+        label.style.backgroundColor = '#e74c3c';
       } else {
-        fileUploadBtn.style.backgroundColor = '#333';
+        label.style.backgroundColor = '#333';
       }
     }
   </script>

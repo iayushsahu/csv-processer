@@ -83,7 +83,7 @@ const processCSV = (filePath, outputFilePath) => {
           "Billing Address Line2": data["Shipping Address2"],
           "Billing City": data["Shipping City"],
           "Billing State": shippingState,
-          "Billing Pincode": data["Shipping Zip"].replace(/^'/, ""),
+          "*Shipping Pincode": data["Shipping Zip"].replace(/^'/, ""),
           "e-Way Bill Number": "",
           "Seller Name": "",
           "Seller GST Number": "",
@@ -101,12 +101,12 @@ const processCSV = (filePath, outputFilePath) => {
   });
 };
 
-// API Routes
-
-// Home Route
+// Serve the static index.html file on root path
 app.get('/', (req, res) => {
-  res.send('Welcome to the CSV Processing API!');
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
+
+// API Routes
 
 // Upload CSV and Process
 app.post('/upload', upload.single('file'), (req, res) => {
