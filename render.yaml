@@ -1,0 +1,8 @@
+services:
+  - name: csv-processor
+    type: web
+    env: node
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "node index.js"
+    autoDeploy: true

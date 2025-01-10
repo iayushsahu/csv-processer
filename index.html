@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSV Processor</title>
+  <style>
+    /* Reset some default styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      overflow-x: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding-right: 50px;
+    }
+
+    /* Full-screen video background */
+    video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .container:hover {
+      transform: scale(1.05);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 2.5rem;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    /* File input styles */
+    .file-upload-container {
+      position: relative;
+      width: 100%;
+      margin: 15px 0;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-upload-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border-radius: 5px;
+      font-size: 1rem;
+      background-color: #333;
+      border: 2px solid #ccc;
+      cursor: pointer;
+      position: relative;
+      text-align: center;
+      color: #fff;
+      transition: background-color 0.3s ease;
+    }
+
+    .file-upload-btn:before {
+      content: "📁 Choose File";
+      margin-right: 10px;
+    }
+
+    .file-upload-btn:hover {
+      background-color: #e74c3c;
+      border-color: #c0392b;
+    }
+
+    .file-upload-btn:active {
+      background-color: #c0392b;
+    }
+
+    button {
+      padding: 15px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1.2rem;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #c0392b;
+      transform: scale(1.05);
+    }
+
+    .download-link {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+      color: #333;
+    }
+
+    .download-link a {
+      color: #e74c3c;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    .download-link a:hover {
+      color: #c0392b;
+    }
+
+    /* Loading animation */
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-top: 4px solid #e74c3c;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 2s linear infinite;
+      margin: 20px auto;
+      display: none;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    .footer a {
+      color: #e74c3c;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: #c0392b;
+    }
+
+    /* Mobile and tablet responsiveness */
+    @media (max-width: 768px) {
+      body {
+        padding-right: 20px;
+      }
+
+      .container {
+        max-width: 100%;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .file-upload-btn {
+        padding: 10px;
+        font-size: 0.9rem;
+      }
+
+      button {
+        padding: 12px;
+        font-size: 1rem;
+      }
+
+      .footer {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding-right: 10px;
+      }
+
+      .container {
+        max-width: 100%;
+        padding: 15px;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .file-upload-btn {
+        padding: 8px;
+        font-size: 0.8rem;
+      }
+
+      button {
+        padding: 10px;
+        font-size: 0.9rem;
+      }
+
+      .footer {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Video Background -->
+  <video autoplay muted loop>
+    <source src="https://videos.pexels.com/video-files/1795797/1795797-hd_1920_1080_30fps.mp4" type="video/mp4">
+  </video>
+
+  <div class="container">
+    <h1>CSV File Processor</h1>
+    
+    <!-- File input styled with a custom button -->
+    <div class="file-upload-container">
+      <label class="file-upload-btn" for="csvFile"></label>
+      <input type="file" id="csvFile" accept=".csv" onchange="changeInputColor()">
+    </div>
+    
+    <button id="submitBtn" onclick="uploadFile()">Process CSV</button>
+
+    <div class="spinner" id="spinner"></div>
+    
+    <div class="download-link" id="downloadLink"></div>
+  </div>
+
+  <div class="footer">
+    <p>Built with ❤️ for traders by Ayush. <a href="#">Privacy Policy</a></p>
+  </div>
+
+  <script>
+    // Function to handle file upload
+    async function uploadFile() {
+      const fileInput = document.getElementById('csvFile');
+      const file = fileInput.files[0];
+      
+      if (!file) {
+        alert("Please select a CSV file to upload.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // Change color of the submit button when clicked
+      const submitButton = document.getElementById('submitBtn');
+      submitButton.style.backgroundColor = '#e74c3c';
+      submitButton.style.cursor = 'not-allowed';
+      submitButton.disabled = true;
+
+      // Show spinner while processing
+      document.getElementById('spinner').style.display = 'block';
+
+      // Simulate processing time
+      setTimeout(async () => {
+        try {
+          const response = await fetch('/process-csv', {
+            method: 'POST',
+            body: formData
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const downloadUrl = data.downloadUrl;
+            showDownloadLink(downloadUrl);
+          } else {
+            alert("Failed to process the CSV file.");
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert("An error occurred while processing the file.");
+        } finally {
+          // Hide the spinner after processing
+          document.getElementById('spinner').style.display = 'none';
+        }
+      }, 3000); // Simulate a 3-second wait for processing
+    }
+
+    // Function to display the download link
+    function showDownloadLink(url) {
+      const downloadLinkDiv = document.getElementById('downloadLink');
+      downloadLinkDiv.innerHTML = `File processed successfully! <a href="${url}" download>Download the processed CSV</a>`;
+    }
+
+    // Change input file button color when a file is selected
+    function changeInputColor() {
+      const fileInput = document.getElementById('csvFile');
+      const fileUploadBtn = document.querySelector('.file-upload-btn');
+      if (fileInput.files.length > 0) {
+        fileUploadBtn.style.backgroundColor = '#e74c3c';
+      } else {
+        fileUploadBtn.style.backgroundColor = '#333';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+node_modules/
+delivery_csv/
+order_csv/
+.env

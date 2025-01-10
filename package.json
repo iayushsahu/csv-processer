@@ -1,0 +1,30 @@
+{
+  "name": "csv-processer",
+  "version": "1.0.0",
+  "description": "this is process shopify csv file to dehlivery csv file",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iayushsahu/csv-processer.git"
+  },
+  "keywords": [
+    "csv-processer",
+    "csv-converter"
+  ],
+  "author": "Ayush",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iayushsahu/csv-processer/issues"
+  },
+  "homepage": "https://github.com/iayushsahu/csv-processer#readme",
+  "dependencies": {
+    "express": "^4.21.2",
+    "fs": "^0.0.1-security",
+    "multer": "^1.4.5-lts.1",
+    "papaparse": "^5.5.1",
+    "path": "^0.12.7"
+  }
+}
